@@ -1,25 +1,29 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String },
-  role: { type: String, default: 'student' },
-  studentId: { type: String},
-  teacherId: {type:String},
-  teacherInitial: {type: String},
-  departmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
-  sectionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Section', default: null , required: false},
-  reqToJoinSectionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Section', default: null },
-  semester: { type: Number },
-  assignedCourses: [
-    {
-      courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-      sectionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Section' }
-    }
-  ],
-  roomNo: {type: String},
-  address: {type: String},
-}, { timestamps: true });
+const UserSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String },
 
-export default mongoose.model('User', UserSchema);
+    role: {
+      type: String,
+      enum: ["student", "teacher", "authority"],
+      default: "student",
+    },
+    enrolledCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Enrollment" }], // student courses
+    createdCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Enrollment" }], // teacher courses
+
+    studentId: String,
+    teacherId: String,
+    teacherInitial: String,
+    departmentId: {type: mongoose.Schema.Types.ObjectId, ref:"Department"},
+    phone: Number,
+    roomNo: String,
+    address: String,
+
+  },
+  { timestamps: true }
+);
+const User = mongoose.model("User", UserSchema);
+export default User

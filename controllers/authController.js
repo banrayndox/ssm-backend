@@ -42,7 +42,7 @@ export const Logout = async (req, res) => {
         // clear cookie
         res.clearCookie('token','',{
            httpOnly: true,
-           secure: true,
+           secure: false,
            sameSite: 'none' 
         })
 
@@ -54,8 +54,8 @@ export const Logout = async (req, res) => {
 }
 
 export const Register = async (req,res) => {
- const {name, email, password, studentId, departmentId, semester} = req.body
- if(!name || !email || !password || !studentId || !departmentId || !semester
+ const {name, email, password, studentId, departmentId} = req.body
+ if(!name || !email || !password || !studentId || !departmentId
  ){
     return res.json({success: false, message:'All fields are required'})
  }
@@ -65,9 +65,10 @@ export const Register = async (req,res) => {
         return res.json({success: false, message: 'User already exists'})
     }
     // hashed password
-    const hashedPassword = await bcrypt.hash(password, 12)
+    // const hashedPassword = await bcrypt.hash(password, 12)
+    const hashedPassword = password
 
-    const user = new User({name, email,password: hashedPassword, studentId, departmentId, semester, sectionId:null ?? undefined})
+    const user = new User({name, email,password: hashedPassword, role:'student', studentId, departmentId})
     await user.save()
     // In registration i don't want to set token and cookie, after reg user should login first
     // token
@@ -93,6 +94,9 @@ export const ResetPass = async (req,res) => {
     }
 }
 
+
+// I will do later
+
 export const VerifyOTP = async (req,res) => {
  const {email, otp} = req.body
  if(!email || !otp) return res.json({success: false, message:'Missing Details'})
@@ -117,9 +121,23 @@ export const isAuthenticated = async (req,res) =>{
         const token = req.cookies.token
        if(!token) return res.json({success: false, message: 'Not authorized'})
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
-        const user = await User.findById(decoded.userId).select('-password').populate('departmentId', 'name').populate('sectionId', 'name').populate('reqToJoinSectionId', 'name')
-        if(!user) return res.json({success: false, message: 'User not found'})
+        const user = await User.findById(decoded.userId).select('-password').populate('departmentId', 'name')      
+        .populate({
+        path: "enrolledCourses",
+        populate: {
+          path: "courseId",
+          select: "name code",
+        },
+      })
+      .populate({
+        path: "createdCourses",
+        populate: {
+          path: "courseId",
+          select: "name code",
+        },
+      })
 
+        if(!user) return res.json({success: false, message: 'User not found'})
         res.json({success: true, user})
     } catch (error) {
         res.json({success: false, message: error.message})

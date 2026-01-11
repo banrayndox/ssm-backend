@@ -9,6 +9,7 @@ export const userAuth = async (req, res, next) => {
             req.user = decoded
             next()
         } catch (error) {
+            console.log('failed')
             return res.json({success:false, message: error.message})
         }
 }

@@ -1,8 +1,21 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const DepartmentSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  code: { type: String, required: true, unique: true },
-}, { timestamps: true });
+const DepartmentSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true, // Computer Science & Engineering
+      unique: true,
+    },
 
-export default mongoose.model('Department', DepartmentSchema);
+    code: {
+      type: String,
+      required: true, // CSE
+      unique: true,
+    }
+  },
+  { timestamps: true }
+);
+
+const Department = mongoose.model("Department", DepartmentSchema);
+export default Department
