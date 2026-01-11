@@ -45,6 +45,7 @@ export const Logout = async (req, res) => {
            secure: true,
            sameSite: 'none' ,
             path: '/',  
+            domain: '.vercel.app'
         })
 
         return res.json({success: true, message:'Logout Successfully'})
