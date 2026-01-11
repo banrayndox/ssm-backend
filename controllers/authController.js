@@ -40,10 +40,11 @@ try {
 export const Logout = async (req, res) => {
     try {
         // clear cookie
-        res.clearCookie('token','',{
+        res.clearCookie('token',{
            httpOnly: true,
            secure: true,
-           sameSite: 'none' 
+           sameSite: 'none' ,
+            path: '/',  
         })
 
         return res.json({success: true, message:'Logout Successfully'})
