@@ -30,7 +30,6 @@ try {
         sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
-        domain: '.vercel.app'
     })
  return res.json({success:true, message:'Login Successfull', user})
 } catch (error) {
@@ -47,7 +46,7 @@ export const Logout = async (req, res) => {
            secure: true,
            sameSite: 'none' ,
             path: '/',  
-            domain: '.vercel.app'
+ 
         })
 
         return res.json({success: true, message:'Logout Successfully'})
