@@ -2,6 +2,7 @@ import User from "../models/User.js"
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 export const Login = async (req,res) =>{
+
 const {email, password} = req.body
 if(!email || !password) {
     return res.json({success: false, message:'Email and Password are required'})
@@ -28,9 +29,8 @@ try {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-       
         maxAge: 7 * 24 * 60 * 60 * 1000,
-
+        path:'/'
     })
  return res.json({success:true, message:'Login Successfull', user})
 } catch (error) {
@@ -46,7 +46,7 @@ export const Logout = async (req, res) => {
            httpOnly: true,
            secure: true,
            sameSite: 'none' ,
-   
+           path:'/'
         })
 
 
