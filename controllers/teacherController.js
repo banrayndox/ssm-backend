@@ -10,6 +10,15 @@ export const createCourse = async (req, res) => {
     if (!teacher || teacher.role !== "teacher") {
       return res.status(400).json({ success: false, message: "Invalid teacher" });
     }
+     const existing = await Enrollment.findOne({ passKey });
+    if (existing) {
+      console.log('exits');
+      
+      return res
+        .status(400)
+        .json({ success: false, message: "PassKey already in use for existing course. Should use unique PassKey." });
+
+    }
 
     const enrollment = await Enrollment.create({
       courseId,
@@ -45,15 +54,29 @@ export const updatePassKey = async (req, res) => {
     if (!enrollment) {
       return res.json({ success: false, message: "Course not found" });
     }
-
-    const isTeacher = enrollment.teacherId.toString() === userId;
-    const isCR = enrollment.crId?.toString() === userId;
+ 
+    const isTeacher = String(enrollment.teacherId) === String(userId)
 
     if (!isTeacher && !isCR) {
       return res.status(403).json({
         success: false,
-        message: "Only teacher or CR can update passkey"
+        message: "Only teacher can update passkey"
       });
+    }
+
+    if(enrollment.passKey == newPassKey) {
+         return res
+        .status(400)
+        .json({ success: false, message: "Old passKey is same. PassKey should unique." });
+
+    }
+
+      const existing = await Enrollment.findOne({ newPassKey });
+    if (existing) {
+      return res
+        .status(400)
+        .json({ success: false, message: "PassKey already in use for existing course. Should use unique PassKey." });
+
     }
 
     enrollment.passKey = newPassKey;
