@@ -13,8 +13,8 @@ try {
         return res.json({success: false, message:'Invalid Email'})
     }
     // compare hashed password
-    const isMatch = await bcrypt.compare(password, user.password)
-    // const isMatch = password
+    // const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = password
     if(!isMatch) return res.json({success: false, message:'Invalid Credentials!'})
     // create token 
     const token = jwt.sign({
