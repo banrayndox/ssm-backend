@@ -13,8 +13,8 @@ try {
         return res.json({success: false, message:'Invalid Email'})
     }
     // compare hashed password
-    const isMatch = await bcrypt.compare(password, user.password)
-    // const isMatch = password
+    // const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = password
     if(!isMatch) return res.json({success: false, message:'Invalid Credentials!'})
     // create token 
     const token = jwt.sign({
@@ -30,7 +30,6 @@ try {
         secure: true,
         sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        path:'/'
     })
  return res.json({success:true, message:'Login Successfull', user})
 } catch (error) {
@@ -42,11 +41,10 @@ try {
 export const Logout = async (req, res) => {
     try {
         // clear cookie
-        res.clearCookie('token',{
+        res.clearCookie("token",{
            httpOnly: true,
            secure: true,
            sameSite: 'none' ,
-           path:'/'
         })
 
 
